@@ -1,15 +1,4 @@
-# kicad locking
-
-*.sch -text lockable
-*.kicad_pcb -text lockable
-*fp-info-cache -text lockable
-*fp-lib-table -text lockable
-*sym-lib-table -text lockable
-*.wrl -text lockable
-*.dcm -text lockable
-*.kicad_wks -text lockable
-*.kicad_mod -text lockable
-*.pro -text lockable
-*.lib -text lockable
-*.f3d -text lockable
-
+# CAD binaries tracked via Git LFS
+*.step filter=lfs diff=lfs merge=lfs -text
+*.stp filter=lfs diff=lfs merge=lfs -text
+*.stl filter=lfs diff=lfs merge=lfs -text
