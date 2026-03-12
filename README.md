@@ -179,5 +179,5 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE).
 
 ## Acknowledgments
 
-Codebase is heavily inspired by [comma body](https://github.com/commaai/body)
-- Frequent design and KiCad workflow inspiration from [OpenpilotHardware](https://github.com/lukasloetkolben/OpenpilotHardware)
+- Firmware design inspiration from [comma body](https://github.com/commaai/body)
+- Hardware design and KiCad workflow inspiration from [OpenpilotHardware](https://github.com/lukasloetkolben/OpenpilotHardware)
