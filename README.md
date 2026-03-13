@@ -53,6 +53,13 @@ Before driving:
    - For reversible/car ESC setups, fail-safe output at neutral (`50` = `1.5ms`)
 See [protocol spec](docs/castle_serial_link_protocol.md) for details
 
+## Hardware
+
+- PCB project (KiCad): [pcb/ecu.kicad_pro](pcb/ecu.kicad_pro)
+- ECU PCB assembly 3D model: [mech/ecu.step](mech/ecu.step)
+- Top case models: [mech/top_case.step](mech/top_case.step), [mech/top_case.stl](mech/top_case.stl)
+- Bottom case models: [mech/bottom_case.step](mech/bottom_case.step), [mech/bottom_case.stl](mech/bottom_case.stl)
+
 
 ## Specs
 
@@ -151,6 +158,17 @@ docs/           Documentation
   turbo_ecu_pinout.md             Turbo ECU board-level pin assignments
   stm32f413_af_table.md           STM32F413 alternate-function reference
   castle_serial_link_protocol.md  Castle ESC I2C protocol spec
+pcb/            Hardware design files
+  ecu.kicad_pro KiCad project
+  ecu.kicad_sch KiCad schematic
+  ecu.kicad_pcb KiCad board layout
+  ecu.pretty/   Custom footprints
+  ecu.symbols/  Custom symbols
+  ecu.3d/       Local 3D model assets referenced by KiCad
+mech/           Mechanical CAD exports
+  ecu.step      Full ECU assembly model
+  top_case.*    Top enclosure model(s)
+  bottom_case.* Bottom enclosure model(s)
 tests/          Hardware test utilities
 ```
 
@@ -173,9 +191,6 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE).
 - Split debug/release key material (separate keypairs and trust policy)
 - Verify Castle electrical-RPM to vehicle-speed conversion against measured ground truth
 - Calibrate steering angle offset and update `STEERING_ANGLE_OFFSET` accordingly
-
-
-> Full KiCad hardware files are coming soon
 
 
 ## Acknowledgments
