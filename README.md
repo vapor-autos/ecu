@@ -114,6 +114,13 @@ make setup         # Create venv and install Python deps
 make keys          # Generate signing keypair
 ```
 
+If you are using hardware CAD/media assets (`pcb/ecu.3d`, `mech/`, demo media), run:
+
+```bash
+git lfs install   # One-time local Git LFS setup
+git lfs pull      # Fetch LFS-tracked assets (CAD/media)
+```
+
 ### Build and flash
 
 Activate the venv before running make commands:
