@@ -20,7 +20,7 @@ extern ecu_t ecu;
 #define CAN_RX_TIMEOUT_MS 500
 #define THROTTLE_DECAY_STEP 100
 #define STEERING_DECAY_STEP 20
-#define STEERING_ANGLE_OFFSET 1500
+#define STEERING_ANGLE_OFFSET 0
 
 // CAN message IDs
 #define CAN_ID_STEERING 0x202
