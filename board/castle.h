@@ -32,10 +32,10 @@ extern I2C_HandleTypeDef hi2c3;
 #define RPM_SCALE_NUM 20416.66f
 #define SCALE_DEN 2042.0f
 
-#define SPEED_MAX_CM_S 4470U                  // 100 mph
-#define SPEED_STOPPED_CM_S 20U                // Treat as stopped below ~0.45 mph
-#define SPEED_MAX_RISE_PER_SAMPLE_CM_S 200U   // 20 Hz read loop: max +4 m/s per sample
-#define SPEED_INVALID_TIMEOUT_SAMPLES 10U     // Hold last speed for 500ms of bad reads, then report zero
+#define SPEED_MAX_CM_S 4470U                // 100 mph
+#define SPEED_STOPPED_CM_S 20U              // Treat as stopped below ~0.45 mph
+#define SPEED_MAX_RISE_PER_SAMPLE_CM_S 200U // 20 Hz read loop: max +4 m/s per sample
+#define SPEED_INVALID_TIMEOUT_SAMPLES 10U   // Hold last speed for 500ms of bad reads, then report zero
 
 enum ReadRegisterAddresses {
     Voltage = 0,
