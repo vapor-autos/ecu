@@ -113,7 +113,7 @@ int main(void) {
             // 20hz loop
             if ((uint32_t)(loop_now - main_loop_20Hz) >= 50U) {
                 uint32_t start = loop_now;
-                speed = read_speed();
+                speed = read_filtered_speed();
                 main_loop_20Hz_runtime = HAL_GetTick() - start;
                 main_loop_20Hz = start;
                 loop_now = HAL_GetTick();

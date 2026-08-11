@@ -32,6 +32,11 @@ extern I2C_HandleTypeDef hi2c3;
 #define RPM_SCALE_NUM 20416.66f
 #define SCALE_DEN 2042.0f
 
+#define SPEED_MAX_CM_S 4470U                  // 100 mph
+#define SPEED_STOPPED_CM_S 20U                // Treat as stopped below ~0.45 mph
+#define SPEED_MAX_RISE_PER_SAMPLE_CM_S 200U   // 20 Hz read loop: max +4 m/s per sample
+#define SPEED_INVALID_TIMEOUT_SAMPLES 10U     // Hold last speed for 500ms of bad reads, then report zero
+
 enum ReadRegisterAddresses {
     Voltage = 0,
     Ripple,
@@ -166,16 +171,8 @@ static inline float castle_parse_float(float value, float scale) {
     return value / SCALE_DEN * scale;
 }
 
-static inline uint16_t read_speed(void) {
-    uint16_t raw_rpm = 0;
-    if (!read_i2c_reg(&hi2c3, Speed, &raw_rpm)) {
-        return 0; // Error reading speed
-    }
-    if (raw_rpm == 0xFFFFU) {
-        return 0; // Castle sentinel for invalid speed sample
-    }
-
-    float electrical_rpm = (float)raw_rpm * RPM_SCALE_NUM / SCALE_DEN;
+static inline uint16_t speed_raw_to_cm_s(uint16_t raw_electrical_rpm_reg) {
+    float electrical_rpm = (float)raw_electrical_rpm_reg * RPM_SCALE_NUM / SCALE_DEN;
     // Castle Speed register is electrical RPM; convert using motor pole pairs.
     float mech_rpm = electrical_rpm / (float)MOTOR_POLE_PAIRS;
 
@@ -197,6 +194,75 @@ static inline uint16_t read_speed(void) {
     }
 
     return (uint16_t)(speed_cm_s + 0.5f); // Round to nearest int
+}
+
+static inline bool read_speed_cm_s(uint16_t *speed_cm_s) {
+    if (speed_cm_s == NULL) {
+        return false;
+    }
+
+    uint16_t raw_electrical_rpm_reg = 0;
+    if (!read_i2c_reg(&hi2c3, Speed, &raw_electrical_rpm_reg)) {
+        return false;
+    }
+    if (raw_electrical_rpm_reg == 0xFFFFU) {
+        return false; // Castle sentinel for invalid speed sample
+    }
+
+    *speed_cm_s = speed_raw_to_cm_s(raw_electrical_rpm_reg);
+    return true;
+}
+
+static inline uint16_t speed_filter_update(uint16_t sample_cm_s, bool sample_valid) {
+    static uint16_t filtered_cm_s = 0;
+    static uint8_t pending_zero_exit_count = 0;
+    static uint8_t invalid_count = 0;
+
+    if (!sample_valid) {
+        if (invalid_count < UINT8_MAX) {
+            invalid_count++;
+        }
+        pending_zero_exit_count = 0;
+
+        if (invalid_count >= SPEED_INVALID_TIMEOUT_SAMPLES) {
+            filtered_cm_s = 0;
+        }
+        return filtered_cm_s;
+    }
+
+    invalid_count = 0;
+
+    if (sample_cm_s > SPEED_MAX_CM_S) {
+        pending_zero_exit_count = 0;
+        return filtered_cm_s;
+    }
+
+    if (filtered_cm_s <= SPEED_STOPPED_CM_S && sample_cm_s > SPEED_STOPPED_CM_S) {
+        pending_zero_exit_count++;
+        if (pending_zero_exit_count < 2U) {
+            return filtered_cm_s;
+        }
+    } else {
+        pending_zero_exit_count = 0;
+    }
+
+    if (sample_cm_s > filtered_cm_s + SPEED_MAX_RISE_PER_SAMPLE_CM_S) {
+        filtered_cm_s += SPEED_MAX_RISE_PER_SAMPLE_CM_S;
+    } else {
+        filtered_cm_s = sample_cm_s;
+    }
+
+    return filtered_cm_s;
+}
+
+static inline uint16_t read_filtered_speed(void) {
+    uint16_t sample_cm_s = 0;
+    bool sample_valid = read_speed_cm_s(&sample_cm_s);
+    return speed_filter_update(sample_cm_s, sample_valid);
+}
+
+static inline uint16_t read_speed(void) {
+    return read_filtered_speed();
 }
 
 static inline uint32_t write_i2c_reg(I2C_HandleTypeDef *hi2c, uint8_t reg_addr, uint16_t data) {
