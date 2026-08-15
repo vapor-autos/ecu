@@ -20,7 +20,9 @@ extern ecu_t ecu;
 #define CAN_RX_TIMEOUT_MS 500
 #define THROTTLE_DECAY_STEP 100
 #define STEERING_DECAY_STEP 20
-#define STEERING_ANGLE_OFFSET 0
+// Steering trim in centidegrees. Positive values make a zero-degree command
+// apply left trim at the servo while CAN feedback still echoes the command.
+#define STEERING_ANGLE_OFFSET 820
 
 // CAN message IDs
 #define CAN_ID_STEERING 0x202
@@ -189,10 +191,10 @@ static inline void handle_can_msg(CAN_RxMessage msg) {
         break;
     case CAN_ID_STEERING:
         if (msg.RxHeader.DLC >= 2) {
-            int16_t steer = (int16_t)(msg.RxData[0] | (msg.RxData[1] << 8));
-            steering_angle = steer;
-            steer = steer - STEERING_ANGLE_OFFSET;
-            steering_val = convert_steering(steer);
+            int16_t steer_cmd = (int16_t)(msg.RxData[0] | (msg.RxData[1] << 8));
+            int32_t applied_steer = (int32_t)steer_cmd - STEERING_ANGLE_OFFSET;
+            steering_angle = steer_cmd;
+            steering_val = convert_steering(applied_steer);
             last_can_rx_time = HAL_GetTick();
         } else {
             uart_printf("Invalid steer message DLC\n");

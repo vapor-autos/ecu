@@ -321,7 +321,7 @@ static inline uint16_t convert_throttle(int16_t throttle) {
 
 // convert_steering maps steering input (-18000..18000) to PWM ticks (4800..7200).
 // Steering center is 6000 with +/-1200 output range.
-static inline uint32_t convert_steering(int16_t steering) {
+static inline uint32_t convert_steering(int32_t steering) {
     // Clamp input to valid range
     if (steering < STEERING_INPUT_MIN)
         steering = STEERING_INPUT_MIN;
