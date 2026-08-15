@@ -192,7 +192,7 @@ static inline void handle_can_msg(CAN_RxMessage msg) {
     case CAN_ID_STEERING:
         if (msg.RxHeader.DLC >= 2) {
             int16_t steer_cmd = (int16_t)(msg.RxData[0] | (msg.RxData[1] << 8));
-            int32_t applied_steer = (int32_t)steer_cmd - STEERING_ANGLE_OFFSET;
+            int16_t applied_steer = steer_cmd - STEERING_ANGLE_OFFSET;
             steering_angle = steer_cmd;
             steering_val = convert_steering(applied_steer);
             last_can_rx_time = HAL_GetTick();
