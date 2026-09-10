@@ -25,10 +25,10 @@ extern I2C_HandleTypeDef hi2c3;
 #define CASTLE_I2C_ADDR 0x08
 #define CASTLE_I2C_TIMEOUT_MS 10
 
-// 2.85 internal gear ratio, 21t pinion, 57t spur gear
-#define FINAL_DRIVE_RATIO 7.74f // 57/21 × 2.85
-#define WHEEL_CIRC_CM 47.12f    // ~150mm rollout diameter => pi * 15.0cm
-#define MOTOR_POLE_PAIRS 2U     // Castle 1415 is 4-pole => 2 pole pairs
+// 2.85 internal gear ratio, 15T pinion, 57T spur gear
+#define FINAL_DRIVE_RATIO 10.83f // 57 / 15 * 2.85
+#define WHEEL_CIRC_CM 36.13f     // ~115 mm loaded rollout diameter
+#define MOTOR_POLE_PAIRS 2U      // Castle 1415 is 4-pole => 2 pole pairs
 #define RPM_SCALE_NUM 20416.66f
 #define SCALE_DEN 2042.0f
 
